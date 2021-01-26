@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { Draggable } from "gsap/Draggable";
-import ReactDOM from 'react-dom';
+//import ReactDOM from 'react-dom';
 
 import leftArrow from "../assets/arrow-left.svg";
 import rightArrow from "../assets/arrow-right.svg";
@@ -35,19 +35,22 @@ const testimonials = [
     "You always pass failure on the way to success."
   }
 ];
+
+
 var numSlides = testimonials.length;
 const proxy = document.createElement("div");
 //ReactDOM.render(<div/>, document.getElementById('root'));
 var currentIndex = 0;
 
 function Slider() {
-
+  
+  var slideDuration = 0.3;
   const sliderRef = useRef([]);
   sliderRef.current = [];
+  var progressWrap = gsap.utils.wrap(0, 1);
   var wrap = gsap.utils.wrap(-100, (numSlides - 1) * 100);
   var slideAnimation = gsap.to({}, {});
-  var slideDuration = 0.3;
-  var progressWrap = gsap.utils.wrap(0, 1);
+  
 
   useEffect(() => {
     var norm = (gsap.getProperty(proxy, "x") / sliderRef.current[currentIndex].offsetWidth * numSlides) || 0;
@@ -61,7 +64,7 @@ function Slider() {
 
 function animateSlides(direction) {
   
-  slideAnimation.kill();
+  
   console.log(sliderRef.current[currentIndex].offsetWidth);
   
   var snapX = gsap.utils.snap(sliderRef.current[currentIndex].offsetWidth);
@@ -72,14 +75,14 @@ function animateSlides(direction) {
     onUpdate: updateProgress
   }); 
 
-
+  //slideAnimation.kill();
   
   
 }
 
 function updateProgress() { 
     gsap.to(sliderRef.current, {
-      xPercent: "+=" + (numSlides * 100),
+      xPercent: "+=" + (numSlides * 5),
       duration: 1,
       ease: "none",
       paused: true,
@@ -91,7 +94,7 @@ function updateProgress() {
 
 useEffect(()=>{
   gsap.set(sliderRef.current, {
-    xPercent: i => i * 100
+    xPercent: i => i * 5
   });
 },[]);
 

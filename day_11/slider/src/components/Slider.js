@@ -1,145 +1,115 @@
-import React, { useState, useRef } from "react";
-import { TweenLite, Power3 } from "gsap";
+import React, { useRef, useEffect } from "react";
+import { gsap } from "gsap";
+import { Draggable } from "gsap/Draggable";
+import ReactDOM from 'react-dom';
 
 import leftArrow from "../assets/arrow-left.svg";
 import rightArrow from "../assets/arrow-right.svg";
 
+gsap.registerPlugin(Draggable);
 
 const testimonials = [
   {
-    name: "Dr. Seuss",
+    name: "image1",
     title: "Author/Poet",
-    image: `https://i.imgur.com/c4I17bM.jpg`,
+    image: `https://i.imgur.com/eClRomj.png`,
     quote:
       "The more that you read, the more things you will know. The more that you learn, the more places you'll go."
   },
   {
-    name: "Zig Ziglar",
-    title: "Author",
-    image: `https://i.imgur.com/UruLMgf.jpg`,
+    name: "image2",
+    image: `https://i.imgur.com/EuZiVwU.png`,
     quote:
       "Positive thinking will let you do everything better than negative thinking will."
   },
   {
-    name: "Les Brown",
-    title: "Author",
-    image: `https://i.imgur.com/sKnSRla.jpg`,
+    name: "image3",
+    image: `https://i.imgur.com/wx36biP.png`,
     quote:
       "If opportunity doesn’t knock, build a door."
+  },
+  {
+    name: "image4",
+    image: `https://i.imgur.com/oSFa6vM.png`,
+    quote:
+    "You always pass failure on the way to success."
   }
 ];
-
+var numSlides = testimonials.length;
+const proxy = document.createElement("div");
+//ReactDOM.render(<div/>, document.getElementById('root'));
+var currentIndex = 0;
 
 function Slider() {
-  let imageList = useRef(null);
-  let testimonialList = useRef(null);
-  const imageWidth = 340;
 
-  const [state, setState] = useState({
-    isActive1: true,
-    isActive2: false,
-    isActive3: false
-  });
+  const sliderRef = useRef([]);
+  sliderRef.current = [];
+  var wrap = gsap.utils.wrap(-100, (numSlides - 1) * 100);
+  var slideAnimation = gsap.to({}, {});
+  var slideDuration = 0.3;
+  var progressWrap = gsap.utils.wrap(0, 1);
 
-
-  //Image transition
-  const slideLeft = (index, duration, multiplied = 1) => {
-    TweenLite.to(imageList.children[index], duration, {
-      x: -imageWidth * multiplied,
-      ease: Power3.easeOut
+  useEffect(() => {
+    var norm = (gsap.getProperty(proxy, "x") / sliderRef.current[currentIndex].offsetWidth * numSlides) || 0;
+    gsap.set(proxy, {
+      x: norm * sliderRef.current[currentIndex].offsetWidth * numSlides
     });
-  };
+    
+    animateSlides(0);
+    slideAnimation.progress(1);
+  }, [])
 
-  const slideRight = (index, duration, multiplied = 1) => {
-    TweenLite.to(imageList.children[index], duration, {
-      x: imageWidth * multiplied,
-      ease: Power3.easeOut
-    });
-  };
-
-  const scale = (index, duration) => {
-    TweenLite.from(imageList.children[index], duration, {
-      scale: 1.2,
-      ease: Power3.easeOut
-    });
-  };
-
-  //Content transition
-
-  const fadeOut = (index, duration) => {
-    TweenLite.to(testimonialList.children[index], duration, {
-      opacity: 0
-    });
-  };
-
-  const fadeIn = (index, duration) => {
-    TweenLite.to(testimonialList.children[index], duration, {
-      opacity: 1,
-      delay: 1
-    });
-  };
-
-  const nextSlide = () => {
-    if (imageList.children[0].classList.contains("active")) {
-      setState({ isActive1: false, isActive2: true });
-      //Image transition
-      slideLeft(0, 1);
-      slideLeft(1, 1);
-      scale(1, 1);
-      slideLeft(2, 1);
-      slideLeft(2, 0);
-   
-    } else if (imageList.children[1].classList.contains("active")) {
-      setState({ isActive2: false, isActive3: true });
-      //Image transition
-      slideRight(0, 1);
-      slideLeft(1, 1, 2);
-      slideLeft(2, 1, 2);
-      scale(2, 1);
-
-    } else if (imageList.children[2].classList.contains("active")) {
-      setState({ isActive1: true, isActive3: false });
-      //Image transition
-      slideLeft(2, 1, 3);
-      slideLeft(0, 1, 0);
-      slideLeft(1, 0, 0);
-      scale(0, 1);
+function animateSlides(direction) {
   
-    }
-  };
+  slideAnimation.kill();
+  console.log(sliderRef.current[currentIndex].offsetWidth);
+  
+  var snapX = gsap.utils.snap(sliderRef.current[currentIndex].offsetWidth);
+  var x = snapX(gsap.getProperty(proxy, "x") + direction * sliderRef.current[currentIndex].offsetWidth); 
+  slideAnimation = gsap.to(proxy, {
+    x: x,
+    duration: slideDuration,
+    onUpdate: updateProgress
+  }); 
 
-  const prevSlide = () => {
-    if (imageList.children[0].classList.contains("active")) {
-      setState({ isActive1: false, isActive3: true });
-      //Image transition
-      slideLeft(2, 0, 3);
-      slideLeft(2, 1, 2);
-      scale(2, 1);
-      slideRight(0, 1);
-      slideRight(1, 1);
-      //content transtion
-   
-    } else if (imageList.children[1].classList.contains("active")) {
-      setState({ isActive2: false, isActive1: true });
-      //Image transition
-      slideLeft(0, 0);
-      slideRight(0, 1, 0);
-      slideRight(1, 1, 0);
-      slideRight(2, 1, 2);
-      scale(0, 1);
-      //content transtion
-    
-    } else if (imageList.children[2].classList.contains("active")) {
-      setState({ isActive2: true, isActive3: false });
-      slideLeft(2, 1);
-      slideLeft(1, 0, 2);
-      slideLeft(1, 1);
-      scale(1, 1);
-      //content transtion
-    
-    }
-  };
 
+  
+  
+}
+
+function updateProgress() { 
+    gsap.to(sliderRef.current, {
+      xPercent: "+=" + (numSlides * 100),
+      duration: 1,
+      ease: "none",
+      paused: true,
+      repeat: -1,
+      modifiers: {
+    xPercent: wrap
+  } }).progress(progressWrap(gsap.getProperty(proxy, "x") / sliderRef.current[currentIndex].offsetWidth * numSlides));
+}
+
+useEffect(()=>{
+  gsap.set(sliderRef.current, {
+    xPercent: i => i * 100
+  });
+},[]);
+
+const nextSlide =  () => {
+  console.log('next slide');
+  animateSlides(-1);
+}
+
+const prevSlide = () => {
+  console.log('prev slide');
+  animateSlides(1);
+}
+
+const addToRefs = (el) =>{
+  if(el && !sliderRef.current.includes(el)){
+    sliderRef.current.push(el);
+  }
+}
   return (
     <div className="testimonial-section">
       <div className="testimonial-container">
@@ -150,16 +120,14 @@ function Slider() {
         </div>
         <div className="inner">
           <div className="t-image">
-            <ul ref={el => (imageList = el)}>
-              <li className={state.isActive1 ? "active" : ""}>
-                <img src={testimonials[0].image} alt={testimonials[0].name} />
-              </li>
-              <li className={state.isActive2 ? "active" : ""}>
-                <img src={testimonials[1].image} alt={testimonials[0].name} />
-              </li>
-              <li className={state.isActive3 ? "active" : ""}>
-                <img src={testimonials[2].image} alt={testimonials[0].name} />
-              </li>
+            <ul> 
+            {
+              testimonials ? testimonials.map((t, index) => (
+                <li key={index}>
+                  <img src={t.image} className='slide' ref={addToRefs} ></img>
+                </li>
+              )) : null 
+            }
             </ul>
           </div>
 

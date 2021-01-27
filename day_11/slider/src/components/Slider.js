@@ -38,6 +38,7 @@ const testimonials = [
 
 
 var numSlides = testimonials.length;
+console.log(numSlides);
 const proxy = document.createElement("div");
 //ReactDOM.render(<div/>, document.getElementById('root'));
 var currentIndex = 0;
@@ -51,7 +52,6 @@ function Slider() {
   var wrap = gsap.utils.wrap(-100, (numSlides - 1) * 100);
   var slideAnimation = gsap.to({}, {});
   
-
   useEffect(() => {
     var norm = (gsap.getProperty(proxy, "x") / sliderRef.current[currentIndex].offsetWidth * numSlides) || 0;
     gsap.set(proxy, {
@@ -62,11 +62,35 @@ function Slider() {
     slideAnimation.progress(1);
   }, [])
 
+  useEffect(()=>{
+    gsap.set(sliderRef.current, {
+      xPercent: i => i * 100
+    });
+  },[]);
+  
+  const nextSlide =  () => {
+    console.log('next slide');
+    animateSlides(-1);
+  }
+  
+  const prevSlide = () => {
+    console.log('prev slide');
+    animateSlides(1);
+  }
+  
+  
+  
+  const addToRefs = (el) =>{
+    if(el && !sliderRef.current.includes(el)){
+      sliderRef.current.push(el);
+      console.log(el);
+    }
+  }
 function animateSlides(direction) {
   
-  
+  // todo : your array is empty, but why?
   console.log(sliderRef.current[currentIndex].offsetWidth);
-  
+  slideAnimation.kill();
   var snapX = gsap.utils.snap(sliderRef.current[currentIndex].offsetWidth);
   var x = snapX(gsap.getProperty(proxy, "x") + direction * sliderRef.current[currentIndex].offsetWidth); 
   slideAnimation = gsap.to(proxy, {
@@ -75,14 +99,14 @@ function animateSlides(direction) {
     onUpdate: updateProgress
   }); 
 
-  //slideAnimation.kill();
+ 
   
   
 }
 
 function updateProgress() { 
     gsap.to(sliderRef.current, {
-      xPercent: "+=" + (numSlides * 5),
+      xPercent: "+=" + (numSlides * 100),
       duration: 1,
       ease: "none",
       paused: true,
@@ -92,27 +116,7 @@ function updateProgress() {
   } }).progress(progressWrap(gsap.getProperty(proxy, "x") / sliderRef.current[currentIndex].offsetWidth * numSlides));
 }
 
-useEffect(()=>{
-  gsap.set(sliderRef.current, {
-    xPercent: i => i * 5
-  });
-},[]);
 
-const nextSlide =  () => {
-  console.log('next slide');
-  animateSlides(-1);
-}
-
-const prevSlide = () => {
-  console.log('prev slide');
-  animateSlides(1);
-}
-
-const addToRefs = (el) =>{
-  if(el && !sliderRef.current.includes(el)){
-    sliderRef.current.push(el);
-  }
-}
   return (
     <div className="testimonial-section">
       <div className="testimonial-container">
@@ -127,7 +131,7 @@ const addToRefs = (el) =>{
             {
               testimonials ? testimonials.map((t, index) => (
                 <li key={index}>
-                  <img src={t.image} className='slide' ref={addToRefs} ></img>
+                  <img src={t.image} className='slide' ref={addToRefs} alt=""></img>
                 </li>
               )) : null 
             }

@@ -1,0 +1,19 @@
+body {
+  background: #c8dce7;
+  color: black;
+  font-family: 'Poppins';
+  margin: 0;
+  padding: 14em 14em 14em 20em;
+}
+
+.circle {
+  position: absolute;
+  top: 200px;
+  left: 200px;
+  width: 400px;
+  height: 400px;
+  background: #a03bff;
+  border-radius: 50%;
+  z-index: -1;
+}
+/*# sourceMappingURL=main.css.map */

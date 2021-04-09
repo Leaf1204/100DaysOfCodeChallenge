@@ -1,5 +1,5 @@
 <div class="container">
-  <div class="row">
+  <!-- <div class="row">
     <div class="col-xs-12">
       <h3>Bind it!</h3>
       <ol>
@@ -13,9 +13,15 @@
         <li>Style the element (e.g. paragraph) holding your output text differently in both components</li>
       </ol>
     </div>
-  </div>
+  </div> -->
   <div class="row col-xs-12">
     <app-game-control (intervalFired)="onIntervalFried($event)"></app-game-control>
-  
   </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <app-odd *ngFor="let oddNumber of oddNumbers" [number]="oddNumber"></app-odd>
+      <app-even *ngFor="let evenNumber of evenNumbers" [number]="evenNumber"></app-even>
+    </div>
+  </div>
+  
 </div>

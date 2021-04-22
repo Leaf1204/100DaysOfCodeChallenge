@@ -18,6 +18,7 @@ import {
   ComboboxOptionText,
 } from "@reach/combobox";
 import "@reach/combobox/styles.css";
+import { formatRelative } from "date-fns";
 import { MDBIcon } from "mdbreact";
 
 //import mapStyles from "./mapStyles";
@@ -45,6 +46,25 @@ function App() {
 
   const [markers, setMarkers] =React.useState([]);
 
+  //to see info on pin
+  const [selected, setSelected ] = React.useState(null);
+
+  const onMapClick = React.useCallback((e) => {
+    setMarkers((current) => [
+      ...current,
+      {
+        lat: e.latLng.lat(),
+        lng: e.latLng.lng(),
+        time: new Date(),
+      },
+    ]);
+  }, []);
+
+  const mapRef = React.useRef();
+  const onMapLoad = React.useCallback((map) => {
+    mapRef.current = map;
+  }, [])
+
   if (loadError) return "error loading maps";
   if (!isLoaded) return "Loading Maps";
 return (
@@ -54,24 +74,35 @@ return (
     zoom={8} 
     center={center} 
     //options={options}
-    onClick={ (event) => {
-      setMarkers(current => [...current, {
-        lat: event.latLng.lat(),
-        lng: event.latLng.lng(),
-        time: new Date()
-
-      } ])
-    }}
+    onClick={onMapClick}
+    onLoad={onMapLoad}
     >
       {markers.map((marker) => (
         <Marker
         key={marker.time.toISOString()}
         position={{ lat: marker.lat, lng: marker.lng }}
+        onClick={() => {
+          setSelected(marker)
+        }}
         />
       ))}
 
+{selected ? (
+          <InfoWindow
+            position={{ lat: selected.lat, lng: selected.lng }}
+            onCloseClick={() => {
+              setSelected(null);
+            }}
+          >
+            <div>
+              <h2>
+                Recomended Stop
+              </h2>
+              <p> Drivers Name stopped here {formatRelative(selected.time, new Date())}</p>
+            </div>
+          </InfoWindow>
+        ) : null}
     </GoogleMap>
-
   </div>
 );
 };

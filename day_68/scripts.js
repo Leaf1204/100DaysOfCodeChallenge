@@ -66,14 +66,70 @@ const companies= [
 
   // console.log(testMap);
 
-  const ageMap = ages
-  .map (age => Math.sqrt(age))
-  .map (age => age * 2);
+//   const ageMap = ages
+//   .map (age => Math.sqrt(age))
+//   .map (age => age * 2);
 
-console.log(ageMap);
+// console.log(ageMap);
 
-  // sort
+  // sort companies by start year
+
+  // const sortedCompanies = companies.sort(function(c1, c2) {
+  //   if (c1.start > c2.start) {
+  //     return 1;
+  //   } else {
+  //     return -1
+  //   }
+  // });
+
+  // const sortedCompanies = companies.sort((a, b) => (a.start > b.start ? 1 : -1));
+
+  // console.log(sortedCompanies);
+
+
+  // sort ages highest to lowest. Must have a, b or it will just sort by the first number! 
+
+  // const sortAges = ages.sort((a, b) => b - a);
+
+  // console.log(sortAges);
+
   // reduce 
+
+  // add the ages array
+
+  // let ageSum = 0;
+  // for (let i = 0; i <ages.length; i ++) {
+  //   ageSum += ages[i];
+  // }
+
+  // const ageSum = ages.reduce(function (total, age) {
+  //   return total + age;
+  // }, 0);
+
+  // const ageSum = ages.reduce((total, age) => total + age, 0 )
+  // console.log(ageSum);
+
+
+  //get totaly years for all companies 
+
+  // const totalYears = companies.reduce(function(total, company) {
+  //   return total + (company.end - company.start)
+  // }, 0);
+
+  // const totalYears = companies.reduce((total, company) => total + (company.end - company.start), 0)
+  // console.log(totalYears)
+
+
+  // combine methods 
+
+  const combined = ages
+  .map(age => age * 2)
+  .filter(age => age >= 40)
+  .sort((a,b) => a -b)
+  .reduce((a, b) => a + b, 0)
+  ;
+
+  console.log(combined);
 
 
 
